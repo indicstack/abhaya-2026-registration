@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Abhaya Shivir Registration</title>
 <style>
   :root{
@@ -211,11 +216,17 @@
 
   .nav-row{ display:flex; gap:10px; margin-top:20px; }
   .btn{
-    font-size:16px; font-weight:800; border-radius:12px; cursor:pointer; min-height:52px; padding:0 20px;
+    font-size:16px; font-weight:800; border-radius:12px; cursor:pointer; min-height:52px; padding:0 18px;
     border:2px solid transparent; flex:1;
+    display:flex; align-items:center; justify-content:center; position:relative;
   }
-  .btn-back{ background:var(--paper); color:var(--ink-soft); border-color:var(--line-strong); flex:1; }
+  .btn-label{ width:100%; text-align:center; }
+  .btn-arrow{ width:22px; height:22px; position:absolute; top:50%; transform:translateY(-50%); }
+  .btn-back{ background:var(--paper); color:var(--ink); border-color:var(--line-strong); flex:1; }
+  .btn-back .btn-arrow{ left:14px; color:var(--red); }
+  .btn-back:hover{ border-color:var(--red); }
   .btn-next{ background:var(--red); color:#fff; }
+  .btn-next .btn-arrow{ right:14px; color:#fff; }
   .btn-next:hover{ background:var(--red-dark); }
   .btn-next:disabled{ opacity:.6; cursor:wait; }
 
@@ -241,6 +252,8 @@
   .ref-box span{ font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); font-weight:700; }
   .ref-box b{ font-size:19px; font-variant-numeric:tabular-nums; }
 </style>
+</head>
+<body>
 
 <div class="hero">
   <div class="wrap">
@@ -978,13 +991,28 @@ var STATES_DATA = [
       if(renderer) sec.appendChild(renderer(field));
     });
 
+    function chevron(dir){
+      var s = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      s.setAttribute('viewBox','0 0 24 24'); s.setAttribute('fill','none'); s.setAttribute('stroke','currentColor');
+      s.setAttribute('stroke-width','3.2'); s.setAttribute('stroke-linecap','round'); s.setAttribute('stroke-linejoin','round');
+      s.setAttribute('class','btn-arrow');
+      var path = document.createElementNS('http://www.w3.org/2000/svg','path');
+      path.setAttribute('d', dir === 'left' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7');
+      s.appendChild(path);
+      return s;
+    }
+
     var nav = el('div', {class:'nav-row'});
     if(WIZ.step > 0){
-      nav.appendChild(el('button', {type:'button', class:'btn btn-back', text: '← ' + t('wizard.back'), onclick: goBack}));
+      var backBtn = el('button', {type:'button', class:'btn btn-back', onclick: goBack});
+      backBtn.appendChild(chevron('left'));
+      backBtn.appendChild(el('span', {class:'btn-label', text: t('wizard.back')}));
+      nav.appendChild(backBtn);
     }
     var isLast = WIZ.step === WIZ.flow.screens.length - 1;
-    var nextLabel = isLast ? t('wizard.submit') : (t('wizard.next') + ' →');
-    var nextBtn = el('button', {type:'button', class:'btn btn-next', id:'nextBtn', text: nextLabel, onclick: isLast ? doSubmit : goNext});
+    var nextBtn = el('button', {type:'button', class:'btn btn-next', id:'nextBtn', onclick: isLast ? doSubmit : goNext});
+    nextBtn.appendChild(el('span', {class:'btn-label', text: isLast ? t('wizard.submit') : t('wizard.next')}));
+    if(!isLast) nextBtn.appendChild(chevron('right'));
     nav.appendChild(nextBtn);
     sec.appendChild(nav);
 
@@ -1323,3 +1351,5 @@ var STATES_DATA = [
 })();
 
 </script>
+</body>
+</html>
